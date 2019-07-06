@@ -43,10 +43,10 @@ fun Canvas.drawRotLine(deg : Float, size : Float, paint : Paint) {
 fun Canvas.drawJointLine(i : Int, sc : Float, size : Float, paint : Paint) {
     val sweepDeg : Float = totalDeg / lines
     val sci : Float = sc.divideScale(i, lines)
-    val x1 : Float = size * Math.cos(-90 + sweepDeg * i * Math.PI / 180).toFloat()
-    val y1 : Float = size * Math.sin(-90 + sweepDeg * i * Math.PI / 180).toFloat()
-    val x2 : Float = size * Math.cos(-90 + sweepDeg * (i + 1) * Math.PI / 180).toFloat()
-    val y2 : Float = size * Math.sin(-90 + sweepDeg * (i + 1) * Math.PI / 180).toFloat()
+    val x1 : Float = size * Math.cos(-180 - sweepDeg / 2 + sweepDeg * i * Math.PI / 180).toFloat()
+    val y1 : Float = size * Math.sin(-180 - sweepDeg / 2 + sweepDeg * i * Math.PI / 180).toFloat()
+    val x2 : Float = size * Math.cos(-180 - sweepDeg / 2 + sweepDeg * (i + 1) * Math.PI / 180).toFloat()
+    val y2 : Float = size * Math.sin(-180 - sweepDeg / 2 + sweepDeg * (i + 1) * Math.PI / 180).toFloat()
     save()
     drawLine(x1, y1, x1 + (x2 - x1) * sci, y1 + (y2 - y1) * sci, paint)
     restore()
@@ -74,10 +74,13 @@ fun Canvas.drawMLRNode(i : Int, scale : Float, paint : Paint) {
     val size : Float = gap / sizeFactor
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
+    paint.color = foreColor
+    paint.strokeCap = Paint.Cap.ROUND
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
     save()
     translate(w / 2, gap * (i + 1))
-    drawMultiRotLine(sc2, size, paint)
-    drawJointLines(sc1, size, paint)
+    drawMultiRotLine(sc1, size, paint)
+    drawJointLines(sc2, size, paint)
     restore()
 }
 
@@ -153,7 +156,7 @@ class MultiLineRotView(ctx : Context) : View(ctx) {
         private var prev : MLRNode? = null
 
         init {
-
+            addNeighbor()
         }
 
         fun addNeighbor() {

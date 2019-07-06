@@ -213,4 +213,28 @@ class MultiLineRotView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+
+
+    data class Renderer(var view : MultiLineRotView) {
+
+        private val animator : Animator = Animator(view)
+        private val mlr : MultiLineRot = MultiLineRot(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            mlr.draw(canvas, paint)
+            animator.animate {
+                mlr.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            mlr.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
